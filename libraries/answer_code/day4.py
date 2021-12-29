@@ -1,6 +1,5 @@
 from __future__ import annotations
 import sys
-from typing import Optional
 from libraries.print_util import make_red, make_bold
 from libraries.questions import get_question_input
 
