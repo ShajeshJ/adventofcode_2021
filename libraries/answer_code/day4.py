@@ -29,21 +29,17 @@ class BingoBoard:
         """Returns a boolean indicating if there is a winning
         horizontal/vertical match on the board.
         """
-        is_winner = False
-
         # Check horizontals
         for i in range(0, 25, 5):
             if all(self.marked_state[i + j] for j in range(5)):
-                is_winner = True
-                break
+                return True
 
         # Check verticals
         for i in range(5):
             if all(self.marked_state[i + j] for j in range(0, 25, 5)):
-                is_winner = True
-                break
+                return True
 
-        return is_winner
+        return False
 
     def input_draw(self, draw: int):
         """Marks off the next draw value on the board if found"""
