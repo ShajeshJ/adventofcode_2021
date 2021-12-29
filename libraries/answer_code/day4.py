@@ -96,7 +96,7 @@ def part_1():
     winning_board = None
     winning_draw = None
 
-    # Cannot win with <5 draws, so input the first draws 4 blind
+    # Cannot win with <5 draws, so input the first 4 draws blind
     for draw in draw_order[:4]:
         for board in boards:
             board.input_draw(draw)
@@ -115,7 +115,7 @@ def part_1():
             break  # Can stop drawing once someone has one
 
     print(winning_board)
-    if winning_board is None:
+    if winning_draw is None:
         print(winning_draw)
         sys.exit(make_red("Didn't find a winning board"))
 
@@ -134,7 +134,7 @@ def part_2():
     final_board = None
     final_draw = None
 
-    # Cannot win with <5 draws, so input the first draws 4 blind
+    # Cannot win with <5 draws, so input the first 4 draws blind
     for draw in draw_order[:4]:
         for board in boards:
             board.input_draw(draw)
