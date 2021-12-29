@@ -96,24 +96,70 @@ def part_1():
     winning_board = None
     winning_draw = None
 
-    for i, next_draw in enumerate(draw_order):
+    # Cannot win with <5 draws, so input the first draws 4 blind
+    for draw in draw_order[:4]:
+        for board in boards:
+            board.input_draw(draw)
+    draw_order = draw_order[4:]
+
+    for next_draw in draw_order:
         for board in boards:
             board.input_draw(next_draw)
 
-            if i < 4:
-                continue  # Don't bother checking wins until at least 5 draws
-
             if board.has_win():
                 winning_board = board
-                winning_draw = next_draw
                 break
 
         if winning_board:
+            winning_draw = next_draw
             break  # Can stop drawing once someone has one
 
     print(winning_board)
-    if winning_board is None or winning_draw is None:
+    if winning_board is None:
         print(winning_draw)
-        sys.exit(make_red(f"Didn't find a winning board"))
+        sys.exit(make_red("Didn't find a winning board"))
 
     print(f"Score: {winning_board.get_unmarked_sum() * winning_draw}")
+
+
+def part_2():
+    inputs = get_question_input(4)
+    draw_order = [int(d) for d in next(inputs).split(",")]
+
+    boards: list[BingoBoard] = []
+
+    while next(inputs, None) is not None:  # Skip empty lines separating boards
+        boards.append(BingoBoard.from_file_data([next(inputs) for _ in range(5)]))
+
+    final_board = None
+    final_draw = None
+
+    # Cannot win with <5 draws, so input the first draws 4 blind
+    for draw in draw_order[:4]:
+        for board in boards:
+            board.input_draw(draw)
+    draw_order = draw_order[4:]
+
+    for next_draw in draw_order:
+        remaining_boards = []
+
+        for board in boards:
+            board.input_draw(next_draw)
+
+            if board.has_win():
+                final_board = board  # `final_board` keeps updating until last one wins
+            else:
+                remaining_boards.append(board)
+
+        if not remaining_boards:
+            final_draw = next_draw
+            break  # All boards have won; can stop drawing
+
+        boards = remaining_boards  # Otherwise, transfer remaining boards to continue checking
+
+    print(final_board)
+    if final_draw is None:
+        print(final_draw)
+        sys.exit(make_red("Still some boards remainining..."))
+
+    print(f"Score: {final_board.get_unmarked_sum() * final_draw}")
