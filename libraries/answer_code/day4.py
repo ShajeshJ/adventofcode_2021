@@ -108,7 +108,7 @@ def part_1():
 
         if winning_board:
             winning_draw = next_draw
-            break  # Can stop drawing once someone has one
+            break  # Can stop drawing once someone has won
 
     print(winning_board)
     if winning_draw is None:
