@@ -1,5 +1,4 @@
 import itertools
-from typing import Generator
 from libraries.questions import get_question_input
 
 
@@ -53,9 +52,7 @@ def part_2():
     print(len(paired_points))
 
 
-def __get_point_generator(
-    x1: int, y1: int, x2: int, y2: int
-) -> Generator[tuple[int, int], None, None]:
+def __get_point_generator(x1: int, y1: int, x2: int, y2: int):
     """Returns a generator which will list all points between the given coordinates"""
 
     def _get_axis_generator(axis_start: int, axis_end: int):
@@ -69,4 +66,4 @@ def __get_point_generator(
     x_gen = _get_axis_generator(x1, x2)
     y_gen = _get_axis_generator(y1, y2)
 
-    return ((xn, yn) for xn, yn in zip(x_gen, y_gen))
+    return zip(x_gen, y_gen)
