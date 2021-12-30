@@ -24,8 +24,13 @@ def part_2():
     crab_positions = [int(p) for p in next(data).split(",")]
 
     def _get_usage(target_pos: int):
-        _get_individual_usage = lambda p: sum(range(0, abs(p - target_pos) + 1))
-        return sum(_get_individual_usage(p) for p in crab_positions)
+        _num_steps = lambda p: abs(p - target_pos)
+
+        # Usage is just the sum of the arithmetic series 1..n (steps)
+        # This is calculated with the formula: (n+1)*n/2
+        _individual_usage = lambda p: int((_num_steps(p) + 1) * _num_steps(p) / 2)
+
+        return sum(_individual_usage(p) for p in crab_positions)
 
     ideal_position = min(crab_positions)
     ideal_usage = _get_usage(ideal_position)
