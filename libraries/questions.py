@@ -7,7 +7,7 @@ import inspect
 from libraries.print_util import make_red
 
 
-def get_question_input(day: int) -> Generator[str]:
+def get_question_input(day: int) -> Generator[str, None, None]:
     """Get the input data for the given advent `day`"""
 
     filename = (
