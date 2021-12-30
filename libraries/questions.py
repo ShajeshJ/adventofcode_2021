@@ -20,9 +20,9 @@ def get_question_input(day: int) -> Generator[str, None, None]:
 
 def get_answer_module(day: int) -> ModuleType:
     try:
-        return importlib.import_module(f"libraries.answer_code.day{day}")
+        return importlib.import_module(f"solutions.day{day}")
     except ImportError:
-        sys.exit(make_red(f"No module `libraries.answer_code.day{day}.py` found"))
+        sys.exit(make_red(f"No module `solutions.day{day}.py` found"))
 
 
 def run_answer(answer_module: ModuleType, part: int):
