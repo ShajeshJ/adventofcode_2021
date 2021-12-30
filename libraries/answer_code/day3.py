@@ -1,4 +1,4 @@
-from typing import Iterable, Tuple
+from typing import Iterable
 from libraries.questions import get_question_input
 
 
@@ -43,7 +43,7 @@ def part_2():
 
 def __get_candidates(
     bit_strs: Iterable[str], index: int
-) -> Tuple[list[str], list[str]]:
+) -> tuple[list[str], list[str]]:
     """Sort bit strings into ones that are appropriate for oxygen generator vs
     CO2 scrubbers based on the `index` to examine
 
