@@ -4,6 +4,7 @@ import sys
 from types import ModuleType
 import importlib
 import inspect
+import time
 from libraries.print_util import make_red
 
 
@@ -33,4 +34,7 @@ def run_answer(answer_module: ModuleType, part: int):
     except StopIteration:
         sys.exit(make_red(f"No function `part_{part}` defined in target module"))
 
+    start = time.perf_counter()
     target_func()
+    end = time.perf_counter()
+    print(f"Execution time: {(end - start)*1000:3f} ms")
