@@ -68,33 +68,33 @@ class DigitTranslator:
         wiring_sets = [{c for c in w} for w in wirings]
         self.segment_map = {}
 
-        # Determine `a` using segments of 7 and 1:
-        one_segments = next(w for w in wiring_sets if len(w) == 2)
-        seven_segments = next(w for w in wiring_sets if len(w) == 3)
-        self.segment_map["a"] = (seven_segments - one_segments).pop()
+        # Determine `a` using wirings of 7 and 1:
+        one_wiring = next(w for w in wiring_sets if len(w) == 2)
+        seven_wiring = next(w for w in wiring_sets if len(w) == 3)
+        self.segment_map["a"] = (seven_wiring - one_wiring).pop()
 
-        # Determine `c` using segments of 6
-        six_seg_digits = [w for w in wiring_sets if len(w) == 6]  # Contains 0, 6, 9
+        # Determine `c` using wiring of 6
+        six_seg_wirings = [w for w in wiring_sets if len(w) == 6]  # Contains 0, 6, 9
         # Only 6 does not contain both segments in 1
-        six_segments = next(s for s in six_seg_digits if not s.issuperset(one_segments))
-        self.segment_map["c"] = (DigitTranslator.ALL_SEGMENTS - six_segments).pop()
+        six_wiring = next(s for s in six_seg_wirings if not s.issuperset(one_wiring))
+        self.segment_map["c"] = (DigitTranslator.ALL_SEGMENTS - six_wiring).pop()
 
-        # Determine segments of 9 using segments of 4; then determine `e` using segments of 9
-        six_seg_digits.remove(six_segments)  # Now contains 0, 9
-        four_segments = next(w for w in wiring_sets if len(w) == 4)
-        nine_segments = next(s for s in six_seg_digits if s.issuperset(four_segments))
-        self.segment_map["e"] = (DigitTranslator.ALL_SEGMENTS - nine_segments).pop()
+        # Determine wiring of 9 using wiring of 4; then determine `e` using wiring of 9
+        six_seg_wirings.remove(six_wiring)  # Now contains 0, 9
+        four_wiring = next(w for w in wiring_sets if len(w) == 4)
+        nine_wiring = next(s for s in six_seg_wirings if s.issuperset(four_wiring))
+        self.segment_map["e"] = (DigitTranslator.ALL_SEGMENTS - nine_wiring).pop()
 
-        # Determine `d` using segments of 0
-        six_seg_digits.remove(nine_segments)  # Now contains 0
-        zero_segments = six_seg_digits[0]
-        self.segment_map["d"] = (DigitTranslator.ALL_SEGMENTS - zero_segments).pop()
+        # Determine `d` using wiring of 0
+        six_seg_wirings.remove(nine_wiring)  # Now contains 0
+        zero_wiring = six_seg_wirings[0]
+        self.segment_map["d"] = (DigitTranslator.ALL_SEGMENTS - zero_wiring).pop()
 
-        # Determine `f` using `c` and segments of 1
-        self.segment_map["f"] = (one_segments - {self.segment_map["c"]}).pop()
+        # Determine `f` using `c` and wiring of 1
+        self.segment_map["f"] = (one_wiring - {self.segment_map["c"]}).pop()
 
-        # Determine `b` using `c`, `d`, `f` and segments of 4
-        temp_set_for_b = four_segments - {
+        # Determine `b` using `c`, `d`, `f` and wiring of 4
+        temp_set_for_b = four_wiring - {
             self.segment_map["c"],
             self.segment_map["d"],
             self.segment_map["f"],
