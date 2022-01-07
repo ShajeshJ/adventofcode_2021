@@ -36,7 +36,7 @@ class DigitTranslator:
     ALL_SEGMENTS = {"a", "b", "c", "d", "e", "f", "g"}
 
     # A tupling of the base translation of digit to segments powered
-    DIGIT_SEGMENT_COUPLING: list[tuple[int, set[str]]] = [
+    DIGIT_AND_SEGMENT_MAPS: list[tuple[int, set[str]]] = [
         (0, {"a", "b", "c", "e", "f", "g"}),
         (1, {"c", "f"}),
         (2, {"a", "c", "d", "e", "g"}),
@@ -50,71 +50,69 @@ class DigitTranslator:
     ]
 
     def __init__(self, wirings: list[str]) -> None:
+        # Translations for individual segments
+        self.segment_map: dict[str, str]
+        # Digit + translated segment map pair
+        self.digit_translations: list[tuple[int, set[str]]]
+
         try:
-            self.reset_translations()
             self.build_translations(wirings)
         except:
             sys.exit(make_red(f"Failed setting up translations for wirings: {wirings}"))
 
-    def reset_translations(self):
-        """Reset translation lookups"""
-        self.seg_translation: dict[str, str] = {}
-        self.digit_translations: list[tuple[int, set[str]]] = []
-
     def build_translations(self, wirings: list[str]):
-        """Build the segment translation table given the current wirings for the 10 digits
-
-        Must ensure translations are reset before calling (via `reset_translation`)
-        """
+        """Build the segment translation table given the current wirings for the 10 digits"""
         if len(wirings) != 10:
             raise Exception()
 
         wiring_sets = [{c for c in w} for w in wirings]
+        self.segment_map = {}
 
         # Determine `a` using segments of 7 and 1:
         one_segments = next(w for w in wiring_sets if len(w) == 2)
         seven_segments = next(w for w in wiring_sets if len(w) == 3)
-        self.seg_translation["a"] = (seven_segments - one_segments).pop()
+        self.segment_map["a"] = (seven_segments - one_segments).pop()
 
         # Determine `c` using segments of 6
         six_seg_digits = [w for w in wiring_sets if len(w) == 6]  # Contains 0, 6, 9
         # Only 6 does not contain both segments in 1
         six_segments = next(s for s in six_seg_digits if not s.issuperset(one_segments))
-        self.seg_translation["c"] = (DigitTranslator.ALL_SEGMENTS - six_segments).pop()
+        self.segment_map["c"] = (DigitTranslator.ALL_SEGMENTS - six_segments).pop()
 
         # Determine segments of 9 using segments of 4; then determine `e` using segments of 9
         six_seg_digits.remove(six_segments)  # Now contains 0, 9
         four_segments = next(w for w in wiring_sets if len(w) == 4)
         nine_segments = next(s for s in six_seg_digits if s.issuperset(four_segments))
-        self.seg_translation["e"] = (DigitTranslator.ALL_SEGMENTS - nine_segments).pop()
+        self.segment_map["e"] = (DigitTranslator.ALL_SEGMENTS - nine_segments).pop()
 
         # Determine `d` using segments of 0
         six_seg_digits.remove(nine_segments)  # Now contains 0
         zero_segments = six_seg_digits[0]
-        self.seg_translation["d"] = (DigitTranslator.ALL_SEGMENTS - zero_segments).pop()
+        self.segment_map["d"] = (DigitTranslator.ALL_SEGMENTS - zero_segments).pop()
 
         # Determine `f` using `c` and segments of 1
-        self.seg_translation["f"] = (one_segments - {self.seg_translation["c"]}).pop()
+        self.segment_map["f"] = (one_segments - {self.segment_map["c"]}).pop()
 
         # Determine `b` using `c`, `d`, `f` and segments of 4
         temp_set_for_b = four_segments - {
-            self.seg_translation["c"],
-            self.seg_translation["d"],
-            self.seg_translation["f"],
+            self.segment_map["c"],
+            self.segment_map["d"],
+            self.segment_map["f"],
         }
-        self.seg_translation["b"] = temp_set_for_b.pop()
+        self.segment_map["b"] = temp_set_for_b.pop()
 
         # Determine `g` using all other known segments
-        self.seg_translation["g"] = next(
+        self.segment_map["g"] = next(
             s
             for s in DigitTranslator.ALL_SEGMENTS
-            if s not in self.seg_translation.values()
+            if s not in self.segment_map.values()
         )
 
-        # Finally build digit <-> translated segment map for convenience
+        # Finally we convert the basic (digit, normal segment map) pairs into
+        # (digit, translated segment map) pairs using the translations from `self.segment_map`
         self.digit_translations = [
-            (d, {self.seg_translation[s] for s in sm})
-            for d, sm in DigitTranslator.DIGIT_SEGMENT_COUPLING
+            (d, {self.segment_map[s] for s in sm})
+            for d, sm in DigitTranslator.DIGIT_AND_SEGMENT_MAPS
         ]
 
     def translate(self, powered_segments: str):
@@ -124,7 +122,7 @@ class DigitTranslator:
         return next(
             digit
             for digit, translation in self.digit_translations
-            if translation == powered_set
+            if powered_set == translation
         )
 
 
