@@ -9,7 +9,7 @@ def __navigate_caves(
     repeat_once: bool,
 ):
     """Recrusive function, which given a set of cave connections, will recursively
-    find all possible paths
+    find all possible paths to the "end" node
 
     :param node: The cave node we're currently at
     :param connections: A dictionary of nodes and all other nodes they can visit
