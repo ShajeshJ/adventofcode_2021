@@ -1,4 +1,3 @@
-from typing import Union
 from libraries.questions import get_question_input
 
 
