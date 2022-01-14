@@ -50,10 +50,10 @@ def part_1(num_steps=10):
     Each element of the final polymer will be included in the counts for two
     element pairs, with the exception of the first and last elements of the polymer.
 
-    So to compute, we first increase the counts for each element in the pair
-    by its count. Then we temporarily subtract 1 for the first/last element counts
+    So to compute, we first increase the counts for each element in a pair by the
+    pair's count. Then we temporarily subtract 1 for the first/last element counts,
     to ensure they don't get adjusted. Then we fix all counts by halving them, and
-    finally we re-add 1 for the first/last element counts.
+    finally we add back 1 for the first/last element counts.
 
     The first and last elements in a polymer are unchanged after each polymer step, so
     we can just look at the initial polymer to see what they will be in the final polymer.
