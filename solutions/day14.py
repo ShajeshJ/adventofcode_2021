@@ -17,10 +17,10 @@ def __get_mutation_step_outcome(
     for pair, count in element_pairs.items():
         # Every element pair creates two new pairs in the next step
         left_pair = f"{pair[0]}{insertion_rules[pair]}"
-        new_pairs[left_pair] = new_pairs.setdefault(left_pair, 0) + count
+        new_pairs[left_pair] = new_pairs.get(left_pair, 0) + count
 
         right_pair = f"{insertion_rules[pair]}{pair[1]}"
-        new_pairs[right_pair] = new_pairs.setdefault(right_pair, 0) + count
+        new_pairs[right_pair] = new_pairs.get(right_pair, 0) + count
 
     return new_pairs
 
@@ -63,8 +63,8 @@ def part_1(num_steps=10):
 
     for pair, count in polymer_pairs.items():
         # Add `count` to the counts for each element in the pair
-        element_counts[pair[0]] = element_counts.setdefault(pair[0], 0) + count
-        element_counts[pair[1]] = element_counts.setdefault(pair[1], 0) + count
+        element_counts[pair[0]] = element_counts.get(pair[0], 0) + count
+        element_counts[pair[1]] = element_counts.get(pair[1], 0) + count
 
     element_counts[init_polymer[0]] -= 1
     element_counts[init_polymer[-1]] -= 1
