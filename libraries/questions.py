@@ -19,14 +19,14 @@ def get_question_input(day: int) -> Generator[str, None, None]:
             yield line.strip()
 
 
-def get_answer_module(day: int) -> ModuleType:
+def get_answer_module(day: str) -> ModuleType:
     try:
         return importlib.import_module(f"solutions.day{day}")
     except ImportError:
         sys.exit(make_red(f"No module `solutions.day{day}.py` found"))
 
 
-def run_answer(answer_module: ModuleType, part: int):
+def run_answer(answer_module: ModuleType, part: str):
     funcs = inspect.getmembers(answer_module, inspect.isfunction)
 
     try:
