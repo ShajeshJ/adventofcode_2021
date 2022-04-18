@@ -25,8 +25,8 @@ class SimulationContext:
 def move_probe(ctx: SimulationContext) -> SimulationContext:
     """Moves the probe to the next position using the current x,y `position` and `velocity`"""
     ctx.position = XY(
-        ctx.position[0] + ctx.velocity[0],
-        ctx.position[1] + ctx.velocity[1],
+        ctx.position.x + ctx.velocity.x,
+        ctx.position.y + ctx.velocity.y,
     )
     return ctx
 
