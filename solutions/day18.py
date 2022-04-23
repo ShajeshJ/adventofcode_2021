@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections import namedtuple
 from copy import deepcopy
 from dataclasses import dataclass
 from math import ceil, floor
@@ -70,7 +71,7 @@ class SnailfishNumber:
     right: int | SnailfishNumber
     parent: Optional[SnailfishNumber] = None
 
-    def explode(self: SnailfishNumber):
+    def explode(self):
         """Explodes self"""
         if not isinstance(self.left, int) or not isinstance(self.right, int):
             raise ArithmeticError("Cannot reduce snailfish # with depth > 4")
@@ -86,7 +87,7 @@ class SnailfishNumber:
             raise Exception(f"No explosion available in {self}")
         self.parent = None  # To avoid memory leaking
 
-    def split_entry(self: SnailfishNumber):
+    def split_entry(self):
         """Splits the left most entry >= _SPLIT_THRESHOLD within self"""
         cls = type(self)
         if isinstance(self.left, int) and self.left >= _SPLIT_THRESHOLD:
@@ -97,7 +98,7 @@ class SnailfishNumber:
             raise Exception(f"No split available in {self}")
         self.update_refs_in_children()
 
-    def reduce(self: SnailfishNumber):
+    def reduce(self):
         """Reduces self"""
         while True:
             if exploder := _get_exploding(self):
@@ -108,7 +109,7 @@ class SnailfishNumber:
                 continue
             break
 
-    def magnitude(self: SnailfishNumber) -> int:
+    def magnitude(self) -> int:
         """Returns the magnitude of self"""
         left_magnitude = 3 * (
             self.left if isinstance(self.left, int) else self.left.magnitude()
@@ -118,7 +119,7 @@ class SnailfishNumber:
         )
         return left_magnitude + right_magnitude
 
-    def add_to_left(self: SnailfishNumber, value: int):
+    def add_to_left(self, value: int):
         """Adds `value` to the next operand found traversing left"""
         if self.parent is None:
             # Structure: [self, ...]
@@ -136,7 +137,7 @@ class SnailfishNumber:
                 next_left = next_left.right
             next_left.right += value
 
-    def add_to_right(self: SnailfishNumber, value: int):
+    def add_to_right(self, value: int):
         """Adds `value` to the next operand found traversing right"""
         if self.parent is None:
             # Structure: [..., self]
@@ -154,7 +155,7 @@ class SnailfishNumber:
                 next_right = next_right.left
             next_right.left += value
 
-    def update_refs_in_children(self: SnailfishNumber):
+    def update_refs_in_children(self):
         """Updates operand's parent ref to self, where applicable"""
         if isinstance(self.left, type(self)):
             self.left.parent = self
@@ -162,9 +163,7 @@ class SnailfishNumber:
             self.right.parent = self
 
     @classmethod
-    def from_tokens(
-        cls: type[SnailfishNumber], tokens: list[str | int]
-    ) -> SnailfishNumber:
+    def from_tokens(cls, tokens: list[str | int]) -> SnailfishNumber:
         """Uses the given `tokens` to build a `SnailfishNumber` object"""
 
         def _pop_char(c: str):
@@ -194,7 +193,7 @@ class SnailfishNumber:
         return obj
 
     @classmethod
-    def load(cls: type[SnailfishNumber], snailfish_str: str) -> SnailfishNumber:
+    def load(cls, snailfish_str: str) -> SnailfishNumber:
         """Parses and creates a `SnailfishNumber` object from `snailfish_str`"""
         tokens = _tokenize(snailfish_str)
         orig_len = len(tokens)
@@ -206,7 +205,7 @@ class SnailfishNumber:
                 f"token at around position {orig_len-len(tokens)}"
             ) from e
 
-    def __add__(self: SnailfishNumber, other: SnailfishNumber) -> SnailfishNumber:
+    def __add__(self, other: SnailfishNumber) -> SnailfishNumber:
         """Adds two SnailfishNumber objects together."""
         if not isinstance(other, type(self)):
             raise TypeError(f"Cannot add object of type {type(other)} to {type(self)}")
@@ -226,21 +225,27 @@ def part_1():
         (SnailfishNumber.load(snailfish_str) for snailfish_str in data),
         start=SnailfishNumber.load(next(data)),
     )
-    print(snailfish_sum)
-    print(snailfish_sum.magnitude())
+    print(f"Sum: {snailfish_sum}")
+    print(f"Magnitude: {snailfish_sum.magnitude()}")
 
 
 def part_2():
     data = get_question_input(18)
     snailfish_nums = [SnailfishNumber.load(snailfish_str) for snailfish_str in data]
 
-    largest_magnitude = 0
+    largest = namedtuple("Largest", ["magnitude", "left", "right"])
+    largest.magnitude = 0
+    largest.left = None
+    largest.right = None
+
     for left in snailfish_nums:
         for right in snailfish_nums:
             if left is right:
                 continue
             current_magnitude = (left + right).magnitude()
-            if current_magnitude > largest_magnitude:
-                largest_magnitude = current_magnitude
+            if current_magnitude > largest.magnitude:
+                largest.magnitude = current_magnitude
+                largest.left = left
+                largest.right = right
 
-    print(largest_magnitude)
+    print(f"{largest.left} + {largest.right} = {largest.magnitude}")
