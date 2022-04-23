@@ -3,7 +3,6 @@ from collections import namedtuple
 from copy import deepcopy
 from dataclasses import dataclass
 from math import ceil, floor
-from typing import Optional
 from libraries.questions import get_question_input
 
 
@@ -69,7 +68,7 @@ def _get_split_container(snailfish_num: SnailfishNumber) -> SnailfishNumber | No
 class SnailfishNumber:
     left: int | SnailfishNumber
     right: int | SnailfishNumber
-    parent: Optional[SnailfishNumber] = None
+    parent: SnailfishNumber | None = None
 
     def explode(self):
         """Explodes self"""
