@@ -1,7 +1,7 @@
 from __future__ import annotations
+from copy import deepcopy
 from dataclasses import dataclass
 from math import ceil, floor
-from turtle import left
 from typing import Optional
 from libraries.questions import get_question_input
 
@@ -207,10 +207,11 @@ class SnailfishNumber:
             ) from e
 
     def __add__(self: SnailfishNumber, other: SnailfishNumber) -> SnailfishNumber:
+        """Adds two SnailfishNumber objects together."""
         if not isinstance(other, type(self)):
             raise TypeError(f"Cannot add object of type {type(other)} to {type(self)}")
 
-        sum = SnailfishNumber(self, other)
+        sum = SnailfishNumber(deepcopy(self), deepcopy(other))
         sum.update_refs_in_children()
         sum.reduce()
         return sum
@@ -227,3 +228,19 @@ def part_1():
     )
     print(snailfish_sum)
     print(snailfish_sum.magnitude())
+
+
+def part_2():
+    data = get_question_input(18)
+    snailfish_nums = [SnailfishNumber.load(snailfish_str) for snailfish_str in data]
+
+    largest_magnitude = 0
+    for left in snailfish_nums:
+        for right in snailfish_nums:
+            if left is right:
+                continue
+            current_magnitude = (left + right).magnitude()
+            if current_magnitude > largest_magnitude:
+                largest_magnitude = current_magnitude
+
+    print(largest_magnitude)
