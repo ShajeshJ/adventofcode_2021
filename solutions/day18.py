@@ -70,6 +70,9 @@ class SnailfishNumber:
     right: int | SnailfishNumber
     parent: SnailfishNumber | None = None
 
+    def __post_init__(self):
+        self.update_refs_in_children()
+
     def explode(self):
         """Explodes self"""
         if not isinstance(self.left, int) or not isinstance(self.right, int):
@@ -188,7 +191,6 @@ class SnailfishNumber:
         _pop_char("]")
 
         obj = cls(left, right)
-        obj.update_refs_in_children()
         return obj
 
     @classmethod
@@ -209,8 +211,7 @@ class SnailfishNumber:
         if not isinstance(other, type(self)):
             raise TypeError(f"Cannot add object of type {type(other)} to {type(self)}")
 
-        sum = SnailfishNumber(deepcopy(self), deepcopy(other))
-        sum.update_refs_in_children()
+        sum = type(self)(deepcopy(self), deepcopy(other))
         sum.reduce()
         return sum
 
